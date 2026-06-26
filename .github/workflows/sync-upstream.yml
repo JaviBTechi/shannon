@@ -31,36 +31,3 @@ jobs:
           git checkout -B "${FORK_BRANCH}" "origin/${FORK_BRANCH}"
           git merge --no-edit "upstream/${UPSTREAM_BRANCH}"
           git push origin "${FORK_BRANCH}"
-name: Sync upstream
-
-on:
-  schedule:
-    - cron: "17 11 * * *"
-  workflow_dispatch:
-
-permissions:
-  contents: write
-
-jobs:
-  sync:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout fork
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          persist-credentials: true
-      - name: Fast-forward default branch from upstream
-        env:
-          UPSTREAM_REPO: KeygraphHQ/shannon
-          UPSTREAM_BRANCH: main
-          FORK_BRANCH: main
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add upstream "https://github.com/${UPSTREAM_REPO}.git"
-          git fetch upstream "${UPSTREAM_BRANCH}"
-          git checkout "${FORK_BRANCH}"
-          git merge --ff-only "upstream/${UPSTREAM_BRANCH}"
-          git push origin "${FORK_BRANCH}"
